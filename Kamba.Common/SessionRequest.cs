@@ -11,7 +11,7 @@ namespace Kamba.Common
     {
         private int _requestId;
         private long _requestTime;
-        protected SessionRequest(int clientId, int requestId) : base(clientId)
+        protected SessionRequest(int clientId, int requestId,DataType dataType) : base(clientId,dataType)
         {
             _requestId = requestId;
             _requestTime = DateTime.Now.Ticks;
@@ -24,6 +24,12 @@ namespace Kamba.Common
             stream.Write(_requestId);
             stream.Write(_requestTime);
             return stream;
+        }
+        protected override void SetStream(ByteArrayStream stream)
+        {
+            base.SetStream(stream);
+            _requestId = stream.ReadInt32();
+            _requestTime = stream.ReadInt64();
         }
     }
 }

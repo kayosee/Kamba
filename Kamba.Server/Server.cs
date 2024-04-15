@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kamba.Common;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace Kamba.Server
                     {
                         if(client.Client.Poll(TimeSpan.FromSeconds(5),SelectMode.SelectRead))
                         {
-                            ThreadPool.QueueUserWorkItem(ReadPacket(client));
+                            ThreadPool.QueueUserWorkItem(f=>ReadPacket(client));
                         }
                         else if (client.Client.Poll(TimeSpan.FromSeconds(5), SelectMode.SelectError))
                         {
@@ -60,9 +61,21 @@ namespace Kamba.Server
             return true;
         }
 
-        private WaitCallback ReadPacket(TcpClient client)
+        private void ReadPacket(TcpClient client)
         {
-            throw new NotImplementedException();
+            long totalLength = 0;
+            var packets = new List<Packet>();
+            do
+            {
+                var packet = Packet.FromSocket(client.Client);
+                totalLength += packet.SliceLength;
+                packets.Add(packet);
+                if (totalLength >= packet.TotalLength)
+                    break;
+            } while (true);
+
+            var sessionData = SessionData.FromPackets(packets.ToArray());
+
         }
     }
 }
