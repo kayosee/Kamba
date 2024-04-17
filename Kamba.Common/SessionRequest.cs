@@ -9,14 +9,19 @@ namespace Kamba.Common
 {
     public abstract class SessionRequest : SessionData
     {
-        private int _requestId;
-        private long _requestTime;
-        protected SessionRequest(int clientId, int requestId,DataType dataType) : base(clientId,dataType)
+        protected long _requestId;
+        protected long _requestTime;
+        public SessionRequest(ByteArrayStream stream) : base(stream)
+        {
+            _requestId = stream.ReadInt64();
+            _requestTime = stream.ReadInt64();
+        }
+        protected SessionRequest(DataType dataType, int clientId, long requestId) : base(dataType, clientId)
         {
             _requestId = requestId;
             _requestTime = DateTime.Now.Ticks;
         }
-        public int RequestId { get => _requestId; set => _requestId = value; }
+        public long RequestId { get => _requestId; set => _requestId = value; }
         public long RequestTime { get => _requestTime; set => _requestTime = value; }
         protected override ByteArrayStream GetStream()
         {
@@ -24,12 +29,6 @@ namespace Kamba.Common
             stream.Write(_requestId);
             stream.Write(_requestTime);
             return stream;
-        }
-        protected override void SetStream(ByteArrayStream stream)
-        {
-            base.SetStream(stream);
-            _requestId = stream.ReadInt32();
-            _requestTime = stream.ReadInt64();
         }
     }
 }

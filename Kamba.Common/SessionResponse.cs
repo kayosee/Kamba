@@ -9,14 +9,19 @@ namespace Kamba.Common
 {
     public abstract class SessionResponse : SessionRequest
     {
-        private int _responseId;
-        private long _responseTime;
-        protected SessionResponse(int clientId, int requestId, int responseId,DataType dataType) : base(clientId, requestId,dataType)
+        protected long _responseId;
+        protected long _responseTime;
+        protected SessionResponse(DataType dataType, int clientId, long requestId, long responseId) : base(dataType, clientId, requestId)
         {
             _responseId = responseId;
             _responseTime = DateTime.Now.Ticks;
         }
-        public int ResponseId { get => _responseId; set => _responseId = value; }
+        public long ResponseId { get => _responseId; set => _responseId = value; }
+        public SessionResponse(ByteArrayStream stream):base(stream) 
+        {
+            _responseId = stream.ReadInt64();
+            _responseTime = stream.ReadInt64();
+        }
         protected override ByteArrayStream GetStream()
         {
             var stream = base.GetStream();
@@ -24,12 +29,5 @@ namespace Kamba.Common
             stream.Write(_responseTime);
             return stream;
         }
-        protected override void SetStream(ByteArrayStream stream)
-        {
-            base.SetStream(stream);
-            _responseId = stream.ReadInt32();
-            _responseTime = stream.ReadInt64();
-        }
-
     }
 }

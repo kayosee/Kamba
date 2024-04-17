@@ -9,6 +9,7 @@ namespace Kamba.Common
     public enum DataType
     {
         FileReadRequest,
+        FileReadResponse,
         FileWriteRequest,
         FileDeleteRequest,
     }

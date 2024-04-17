@@ -1,5 +1,6 @@
 ﻿using Kamba.Common;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +19,12 @@ namespace Kamba.Server
         private Thread _acceptor;
         private Thread _reader;
         private ConcurrentDictionary<int, TcpClient> _clients;
+        private List<Socket> _clientsList;
+        private ManualResetEvent _connected;
         public bool Start(int port, string folder)
         {
+            _clientsList = new List<Socket>();
+            _connected = new ManualResetEvent(false);
             _clients = new ConcurrentDictionary<int, TcpClient>();
             _folder = folder;
             _port = port;
@@ -32,6 +37,8 @@ namespace Kamba.Server
                 while (true)
                 {
                     var client = _listener.AcceptTcpClient();
+                    _connected.Set();
+                    _clientsList.Add(client.Client);
                     _clients.TryAdd(_clients.Count, client);
                 }
             });
@@ -40,18 +47,13 @@ namespace Kamba.Server
 
             _reader = new Thread((ThreadStart) =>
             {
-                while (true)
+                while (_connected.WaitOne())
                 {
-                    foreach (var client in _clients.Values)
+                    var temp = _clientsList.ToList();
+                    Socket.Select(temp, null, null, -1);
+                    foreach (Socket client in temp)
                     {
-                        if(client.Client.Poll(TimeSpan.FromSeconds(5),SelectMode.SelectRead))
-                        {
-                            ThreadPool.QueueUserWorkItem(f=>ReadPacket(client));
-                        }
-                        else if (client.Client.Poll(TimeSpan.FromSeconds(5), SelectMode.SelectError))
-                        {
-
-                        }
+                        ReadPacket(client);
                     }
                 }
             });
@@ -61,21 +63,27 @@ namespace Kamba.Server
             return true;
         }
 
-        private void ReadPacket(TcpClient client)
+        private void ReadPacket(Socket socket)
         {
             long totalLength = 0;
             var packets = new List<Packet>();
             do
             {
-                var packet = Packet.FromSocket(client.Client);
-                totalLength += packet.SliceLength;
-                packets.Add(packet);
-                if (totalLength >= packet.TotalLength)
-                    break;
+                try
+                {
+                    var packet = Packet.FromSocket(socket);
+                    totalLength += packet.SliceLength;
+                    packets.Add(packet);
+                    if (totalLength >= packet.TotalLength)
+                        break;
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
             } while (true);
 
             var sessionData = SessionData.FromPackets(packets.ToArray());
-
         }
     }
 }

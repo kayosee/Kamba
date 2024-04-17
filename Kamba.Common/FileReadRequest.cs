@@ -6,30 +6,37 @@ using System.Threading.Tasks;
 
 namespace Kamba.Common
 {
-    internal class FileReadRequest : SessionRequest
+    public class FileReadRequest : SessionRequest
     {
         private int _pathLength;
         private string _path;
-        public FileReadRequest(int clientId, int requestId, string path) : base(clientId, requestId, DataType.FileReadRequest)
+        private long _position;
+        private int _size;
+        public FileReadRequest(int clientId, long requestId, string path, long position,int size) : base(DataType.FileReadRequest, clientId, requestId)
         {
             _path = path;
+            _position = position;
+            _size = size;
+        }
+        public FileReadRequest(ByteArrayStream stream) : base(stream)
+        {
+            _position = stream.ReadInt64();
+            _size = stream.ReadInt32();
+            _pathLength = stream.ReadInt32();
+            var buffer = new byte[_pathLength];
+            stream.Read(buffer, 0, _pathLength);
+            _path = System.Text.Encoding.UTF8.GetString(buffer);
         }
         protected override ByteArrayStream GetStream()
         {
             var stream = base.GetStream();
             var buffer = System.Text.Encoding.UTF8.GetBytes(_path);
             _pathLength = buffer.Length;
+            stream.Write(_position);
+            stream.Write(_size);
             stream.Write(_pathLength);
             stream.Write(buffer, 0, _pathLength);
             return stream;
-        }
-        protected override void SetStream(ByteArrayStream stream)
-        {
-            base.SetStream(stream);
-            _pathLength = stream.ReadInt32();
-            var buffer = new byte[_pathLength];
-            stream.Read(buffer, 0, _pathLength);
-            _path = System.Text.Encoding.UTF8.GetString(buffer);
         }
     }
 }

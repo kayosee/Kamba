@@ -39,7 +39,20 @@ public class ByteArrayStream : IDisposable
 
     public long WritePosition { get => _writePos; set => _writePos = value; }
     public long ReadPosition { get => _readPos; set => _readPos = value; }
+    public int Peek(byte[] buffer, int offset, int count)
+    {
+        if (_data.Length > 0)
+        {
+            var min = Math.Min(count, _data.Length);
+            Span<byte> span = buffer;
+            Span<byte> data = _data;
+            var slice = span.Slice(offset, min);
+            data.Slice((int)_readPos, count).CopyTo(slice);
+            return min;
+        }
 
+        throw new EndOfStreamException();
+    }
     public int Read(byte[] buffer, int offset, int count)
     {
         if (_data.Length > 0)
