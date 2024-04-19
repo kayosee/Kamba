@@ -53,7 +53,9 @@ namespace Kamba.Common
                 stream.Write(_sequence);
                 stream.Write(_sliceLength);
                 stream.Write(_sliceData, 0, _sliceData.Length);
-                return stream.GetBuffer();
+                var result=stream.GetBuffer();
+                File.WriteAllBytes("d:\\1.data",result);
+                return result;
             }
         }
         public static Packet FromSocket(Socket socket)

@@ -12,5 +12,7 @@ namespace Kamba.Common
         FileReadResponse,
         FileWriteRequest,
         FileDeleteRequest,
+        AuthenticateRequest,
+        AuthenticateResponse,
     }
 }

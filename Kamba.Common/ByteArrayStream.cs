@@ -20,7 +20,6 @@ public class ByteArrayStream : IDisposable
         _readPos = 0;
         _writePos = 0;
     }
-
     public ByteArrayStream(long length)
     {
         _data = new byte[length];
@@ -34,9 +33,7 @@ public class ByteArrayStream : IDisposable
         _readPos = 0;
         _writePos = 0;
     }
-
     public long Length => _data.LongLength;
-
     public long WritePosition { get => _writePos; set => _writePos = value; }
     public long ReadPosition { get => _readPos; set => _readPos = value; }
     public int Peek(byte[] buffer, int offset, int count)
@@ -68,7 +65,6 @@ public class ByteArrayStream : IDisposable
 
         throw new EndOfStreamException();
     }
-
     public ushort ReadUInt16()
     {
         var size = sizeof(ushort);
@@ -115,7 +111,6 @@ public class ByteArrayStream : IDisposable
         _readPos += size;
         return result;
     }
-
     public int ReadInt32()
     {
         var size = sizeof(int);
@@ -158,12 +153,10 @@ public class ByteArrayStream : IDisposable
 
         return _readPos;
     }
-
     public void SetLength(long value)
     {
         Array.Resize(ref _data, (int)value);
     }
-
     public void Write(byte[] buffer, int offset, int count)
     {
         if (_writePos + count > _data.Length)
@@ -180,6 +173,14 @@ public class ByteArrayStream : IDisposable
             SetLength(_writePos + 1);
 
         Write(new byte[] { value }, 0, 1);
+    }
+    public void Write(short value)
+    {
+        if (_writePos + sizeof(short) >= _data.Length)
+            SetLength(_writePos + sizeof(short));
+
+        var buffer = BitConverter.GetBytes(value);
+        Write(buffer, 0, buffer.Length);
     }
     public void Write(int value)
     {
@@ -205,16 +206,13 @@ public class ByteArrayStream : IDisposable
         var buffer = BitConverter.GetBytes(value);
         Write(buffer, 0, buffer.Length);
     }
-
     public byte[] GetBuffer()
     {
         return _data;
     }
-
     public void Dispose()
     {
     }
-
     internal byte ReadByte()
     {
         if (_readPos >= _data.LongLength)

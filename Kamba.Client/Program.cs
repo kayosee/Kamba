@@ -1,19 +1,19 @@
 ﻿using Kamba.Common;
+using System.Configuration;
+using System.Net;
+using System.Net.Sockets;
 namespace Kamba.Client
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Client client = new Client();
-            client.Connect("127.0.0.1", 2323);
-            var file = new FileReadRequest(8888,9999, "\\FileSyncServer.exe_240416_080857.dmp", 0,512);
+            var host = ConfigurationManager.AppSettings["host"];
+            var port = ConfigurationManager.AppSettings["port"];
+            var tcpClient = new TcpClient();
+            tcpClient.Connect(IPAddress.Parse(host), int.Parse(port));
+            Client client = new Client(tcpClient.Client);
 
-            var packets=file.ToPackets();
-            foreach(var packet in packets)
-            {
-                client.Client.Send(packet.Serialize());
-            }
             Console.ReadKey();
         }
     }

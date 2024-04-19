@@ -36,10 +36,10 @@ namespace Kamba.Common
         {
             return GetStream().GetBuffer();
         }
-        private static SessionData? Construct(ByteArrayStream stream)
+        public static SessionData? FromStream(ByteArrayStream stream)
         {
             if (stream == null)
-                throw new ArgumentNullException("stream");
+                throw new ArgumentNullException("字节流ByteArrayStream为空");
 
             var buffer = new byte[1];
             stream.Peek(buffer, 0, buffer.Length);
@@ -55,7 +55,7 @@ namespace Kamba.Common
         }
         public static SessionData? FromPackets(Packet[] packets)
         {
-            SessionData data = null;
+            SessionData? data = null;
             using (var stream = new ByteArrayStream())
             {
                 foreach (var packet in packets.OrderBy(f => f.Sequence))
@@ -63,11 +63,10 @@ namespace Kamba.Common
                     stream.Write(packet.SliceData, 0, packet.SliceLength);
                 }
 
-                data = Construct(stream);
+                data = FromStream(stream);
                 return data;
             }            
         }
-
         public Packet[] ToPackets()
         {
             var stream = GetStream();

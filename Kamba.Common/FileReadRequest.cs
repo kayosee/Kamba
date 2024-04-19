@@ -12,7 +12,12 @@ namespace Kamba.Common
         private string _path;
         private long _position;
         private int _size;
-        public FileReadRequest(int clientId, long requestId, string path, long position,int size) : base(DataType.FileReadRequest, clientId, requestId)
+
+        public long Position { get => _position; set => _position = value; }
+        public string Path { get => _path; set => _path = value; }
+        public int Size { get => _size; set => _size = value; }
+
+        public FileReadRequest(int clientId, long requestId, string path, long position, int size) : base(DataType.FileReadRequest, clientId, requestId)
         {
             _path = path;
             _position = position;
