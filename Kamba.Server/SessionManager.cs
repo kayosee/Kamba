@@ -26,7 +26,7 @@ namespace Kamba.Server
                     Socket.Select(sockets, null, null, -1);
                     foreach (var socket in sockets)
                     {
-                        _sessions[(int)socket.Handle].ReadPacket();
+                        _sessions[(int)socket.Handle].ReadAndProcess();
                     }
                 }
             });

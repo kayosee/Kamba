@@ -69,17 +69,16 @@ namespace Kamba.Server
             }
 
             if (response != null)
-                _socket.Send(response.Serialize());
+                WritePacket(response);
 
         }
-
         private void DoAuthenticateRequest(AuthenticateRequest data)
         {
             var username = ConfigurationManager.AppSettings["username"];
             var password = ConfigurationManager.AppSettings["password"];
             var response = new AuthenticateResponse(data.ClientId, data.RequestId, DateTime.Now.Ticks, AuthenticateStatus.Fail);
             response.Status = (username == data.Username && password == data.Password) ? AuthenticateStatus.Success : AuthenticateStatus.Fail;
-            Socket.Send(response.Serialize());
+            WritePacket(response);
         }
     }
 }

@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamba.Server", "Kamba.Serve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamba.Client", "Kamba.Client\Kamba.Client.csproj", "{A226CD9A-729C-480E-8AAC-03A06EAB33A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamba.Web", "Kamba.Web\Kamba.Web.csproj", "{C320B63E-C600-4914-A863-74B1AB7C9133}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamba.Model", "Kamba.Model\Kamba.Model.csproj", "{17DD4407-9FC3-459B-AA8B-AF21CAAF25F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{A226CD9A-729C-480E-8AAC-03A06EAB33A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A226CD9A-729C-480E-8AAC-03A06EAB33A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A226CD9A-729C-480E-8AAC-03A06EAB33A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C320B63E-C600-4914-A863-74B1AB7C9133}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C320B63E-C600-4914-A863-74B1AB7C9133}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C320B63E-C600-4914-A863-74B1AB7C9133}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C320B63E-C600-4914-A863-74B1AB7C9133}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17DD4407-9FC3-459B-AA8B-AF21CAAF25F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17DD4407-9FC3-459B-AA8B-AF21CAAF25F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17DD4407-9FC3-459B-AA8B-AF21CAAF25F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17DD4407-9FC3-459B-AA8B-AF21CAAF25F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -16,17 +16,13 @@ namespace Kamba.Client
         {
             _authenticateStatus = AuthenticateStatus.Unauthenticate;
             var request = new AuthenticateRequest(0, 0, "kao", "123");
-            var packets = request.ToPackets();
-            foreach (var packet in packets)
-            {
-                Socket.Send(packet.Serialize());
-            }
+            WritePacket(request);
 
             _thread = new Thread(() =>
             {
                 while (Socket.Poll(-1, SelectMode.SelectRead))
                 {
-                    ReadPacket();
+                    ReadAndProcess();
                 }
             });
             _thread.Start();
@@ -51,7 +47,7 @@ namespace Kamba.Client
         {
             _id = data.ClientId;
             _authenticateStatus = data.Status;
-            Console.WriteLine(Enum.GetName(typeof(AuthenticateResponse), data.Status));
+            Console.WriteLine(Enum.GetName(typeof(AuthenticateStatus), data.Status));
         }
     }
 }

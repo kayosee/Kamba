@@ -22,7 +22,15 @@ namespace Kamba.Common
         public int Id { get => _id; set => _id = value; }
         public AuthenticateStatus Authenticated { get => _authenticateStatus; }
         public Socket Socket { get => _socket; }
-        public void ReadPacket()
+        public void ReadAndProcess()
+        {
+            var data = ReadPacket();
+            if (data != null)
+            {
+                Process(data);
+            }
+        }
+        public SessionData? ReadPacket()
         {
             long totalLength = 0;
             var packets = new List<Packet>();
@@ -42,13 +50,17 @@ namespace Kamba.Common
                 }
             } while (true);
 
-            var sessionData = SessionData.FromPackets(packets.ToArray());
-            if (sessionData != null)
-            {
-                Process(sessionData);
-            }
+            return SessionData.FromPackets(packets.ToArray());
         }
         public abstract void Process(SessionData data);
+        protected void WritePacket(SessionData data)
+        {
+            var packets = data.ToPackets();
+            foreach (var packet in packets)
+            {
+                Socket.Send(packet.Serialize());
+            }
+        }
         public void Close()
         {
             _socket?.Close();
