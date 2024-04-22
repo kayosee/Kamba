@@ -11,6 +11,15 @@ namespace Kamba.Web.Controllers
     [Route("[controller]")]
     public class UserController : Controller
     {
+        private KambaContext _context;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        public UserController(KambaContext context)
+        {
+            _context = context;
+        }
         /// <summary>
         /// 添加用户
         /// </summary>
@@ -37,7 +46,7 @@ namespace Kamba.Web.Controllers
             using (var context = new KambaContext())
             {
                 var model = context.Users.Find(id);
-                if (model == null) 
+                if (model == null)
                 {
                     return BadRequest();
                 }
@@ -53,29 +62,20 @@ namespace Kamba.Web.Controllers
         [HttpGet]
         public IActionResult List()
         {
-            using (var context = new KambaContext())
-            {
-                var query = (context.Users.ToList());
-                return Ok(query);
-            }
+            var query = (_context.Users.ToList());
+            return Ok(query);
         }
         /// <summary>
         /// 修改用户
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPost]
         public IActionResult Update(User model)
         {
-            using(var  context = new KambaContext())
-            {
-                var old = context.Users.Find(model.Id);
-                if(old == null)
-                    return BadRequest("指定的用户编号不存在。");
-                context.Users.Remove(model);
-                context.SaveChanges();
-                return Ok();
-            }
+            _context.Users.Update(model);
+            _context.SaveChanges();
+            return Ok();
         }
         /// <summary>
         /// 授予用户角色
@@ -84,38 +84,34 @@ namespace Kamba.Web.Controllers
         /// <param name="roleIds"></param>
         /// <returns></returns>
         [HttpPost]
+        [Route("/grantRoles")]
         public IActionResult GrantRoles(int userId, int[] roleIds)
         {
-            using(var context = new KambaContext())
+            foreach (var roleId in roleIds)
             {
-                foreach(var roleId in roleIds)
-                {
-                    context.UserRoles.Add(new UserRole() { UserId = userId, RoleId = roleId });                    
-                }
-                context.SaveChanges();
-                return Ok();
+                _context.UserRoles.Add(new UserRole() { UserId = userId, RoleId = roleId });
             }
+            _context.SaveChanges();
+            return Ok();
         }
         /// <summary>
-        /// 
+        /// 撤销角色
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="roleIds"></param>
         /// <returns></returns>
         [HttpPost]
+        [Route("/revokeRoles")]
         public IActionResult RevokeRoles(int userId, int[] roleIds)
         {
-            using (var context = new KambaContext())
+            foreach (var roleId in roleIds)
             {
-                foreach (var roleId in roleIds)
-                {
-                    var model = context.UserRoles.First(f => f.UserId == userId && f.RoleId == roleId);
-                    if (model != null)
-                        context.UserRoles.Remove(model);
-                }
-                context.SaveChanges();
-                return Ok();
+                var model = _context.UserRoles.First(f => f.UserId == userId && f.RoleId == roleId);
+                if (model != null)
+                    _context.UserRoles.Remove(model);
             }
+            _context.SaveChanges();
+            return Ok();
         }
     }
 }

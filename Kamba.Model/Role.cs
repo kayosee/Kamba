@@ -19,7 +19,5 @@ namespace Kamba.Model
         public string Name { get; set; }
         [Required]
         public DateTime CreateTime { get; set; }
-
-        public virtual ICollection<RolePrivilege> RolePrivilege { get; set; }
     }
 }

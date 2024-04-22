@@ -15,6 +15,8 @@ namespace Kamba.Web
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddCors();
+            builder.Services.AddDbContext<KambaContext>(ServiceLifetime.Transient);
             builder.Services.AddSwaggerGen(f =>
             {
                 f.SwaggerDoc("v1", new OpenApiInfo

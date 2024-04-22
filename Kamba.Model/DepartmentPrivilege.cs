@@ -5,21 +5,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Microsoft.EntityFrameworkCore;
 namespace Kamba.Model
 {
     [Table(nameof(DepartmentPrivilege))]
+    [PrimaryKey(nameof(DepartmentId), nameof(PrivilegeId), nameof(Path))]
     public class DepartmentPrivilege
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [Required]
         [ForeignKey(nameof(DepartmentId))]
         public int DepartmentId { get;set; }
-        [Required]
-        public int Type { get;set; }
-        [Required]
+        [Key]
+        public int PrivilegeId { get;set; }
+        [Key]
         [MaxLength(4000)]
         public string Path { get; set; }
     }

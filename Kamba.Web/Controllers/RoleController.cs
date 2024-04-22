@@ -11,6 +11,11 @@ namespace Kamba.Web.Controllers
     [Route("[controller]")]
     public class RoleController : Controller
     {
+        private KambaContext _context;
+        public RoleController(KambaContext context)
+        {
+            _context = context;
+        }
         /// <summary>
         /// 添加角色
         /// </summary>
@@ -19,32 +24,26 @@ namespace Kamba.Web.Controllers
         [HttpPut]
         public IActionResult Add(Role model)
         {
-            using (var context = new KambaContext())
-            {
-                context.Add(model);
-                context.SaveChanges();
-                return Ok(model);
-            }
+            _context.Add(model);
+            _context.SaveChanges();
+            return Ok(model);
         }
         /// <summary>
         /// 删除角色
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">角色ID</param>
         /// <returns></returns>
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            using (var context = new KambaContext())
+            var model = _context.Roles.Find(id);
+            if (model == null)
             {
-                var model = context.Roles.Find(id);
-                if (model == null) 
-                {
-                    return BadRequest();
-                }
-                context.Roles.Remove(model);
-                context.SaveChanges();
-                return Ok();
+                return BadRequest();
             }
+            _context.Roles.Remove(model);
+            _context.SaveChanges();
+            return Ok();
         }
         /// <summary>
         /// 角色列表
@@ -53,29 +52,63 @@ namespace Kamba.Web.Controllers
         [HttpGet]
         public IActionResult List()
         {
-            using (var context = new KambaContext())
-            {
-                var query = (context.Roles.ToList());
-                return Ok(query);
-            }
+            var query = (_context.Roles.ToList());
+            return Ok(query);
         }
         /// <summary>
         /// 修改角色
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="model">角色信息</param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPost]
         public IActionResult Update(Role model)
         {
-            using(var  context = new KambaContext())
-            {
-                var old = context.Roles.Find(model.Id);
-                if(old == null)
-                    return BadRequest("指定的角色编号不存在。");
-                context.Roles.Remove(model);
-                context.SaveChanges();
-                return Ok();
-            }
+            _context.Roles.Update(model);
+            _context.SaveChanges();
+            return Ok();
         }
+        /// <summary>
+        /// 授予权限
+        /// </summary>
+        /// <param name="roleId">角色ID</param>
+        /// <param name="privileges">权限列表</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("grantPrivileges1")]
+        public IActionResult GrantPrivileges(int roleId, int[] privileges)
+        {
+            foreach (var privilege in privileges)
+            {
+                _context.RolePrivileges.Add(new RolePrivilege
+                {
+                    RoleId = roleId,
+                    PrivilegeId = privilege
+                });
+                _context.SaveChanges();
+            }
+            return Ok();
+        }
+        /// <summary>
+        /// 撤消权限
+        /// </summary>
+        /// <param name="roleId">角色ID</param>
+        /// <param name="privileges">权限列表</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("revokePrivileges")]
+        public IActionResult RevokePrivileges(int roleId, int[] privileges)
+        {
+            foreach (var privilege in privileges)
+            {
+                _context.RolePrivileges.Remove(new RolePrivilege
+                {
+                    RoleId = roleId,
+                    PrivilegeId = privilege
+                });
+                _context.SaveChanges();
+            }
+            return Ok();
+        }
+
     }
 }

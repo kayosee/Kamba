@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,23 +10,21 @@ using System.Threading.Tasks;
 namespace Kamba.Model
 {
     [Table(nameof(RolePrivilege))]
+    [PrimaryKey(nameof(RoleId),nameof(PrivilegeId),nameof(Path))]
     public class RolePrivilege
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [Required]
         [ForeignKey(nameof(RoleId))]
         public int RoleId {  get; set; }
         /// <summary>
         /// 0:读,写,删除
         /// </summary>
-        [Required]
-        public int Type { get; set; }
+        [Key]
+        public int PrivilegeId { get; set; }
         /// <summary>
         /// 路径
         /// </summary>
-        [Required]
+        [Key]
         [StringLength(4000)]
         public string Path { get; set; }
     }
