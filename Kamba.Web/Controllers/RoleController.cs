@@ -74,7 +74,7 @@ namespace Kamba.Web.Controllers
         /// <param name="privileges">权限列表</param>
         /// <returns></returns>
         [HttpPost]
-        [Route("grantPrivileges1")]
+        [Route("grantPrivileges")]
         public IActionResult GrantPrivileges(int roleId, int[] privileges)
         {
             foreach (var privilege in privileges)

@@ -11,8 +11,6 @@ namespace Kamba.Client
             var host = ConfigurationManager.AppSettings["host"];
             var port = ConfigurationManager.AppSettings["port"];
             var tcpClient = new TcpClient();
-            tcpClient.Connect(IPAddress.Parse(host), int.Parse(port));
-            Client client = new Client(tcpClient.Client);
 
             Console.ReadKey();
         }

@@ -1,4 +1,6 @@
 ﻿using Kamba.Common;
+using Kamba.Common.Request;
+using Kamba.Common.Response;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -14,27 +16,32 @@ namespace Kamba.Server
         public ServerSession(Socket socket) : base(socket)
         {
         }
-        public override void Process(SessionData data)
+        public void Process()
         {
-            if (data.DataType == DataType.AuthenticateRequest)
+            var packet = ReadPacket();
+            if (packet == null)
             {
-                DoAuthenticateRequest((AuthenticateRequest)data);
+                return;
+            }
+            if (packet.DataType == DataType.AuthenticateRequest)
+            {
+                DoAuthenticateRequest((AuthenticateRequest)packet);
                 return;
             }
 
             if (_authenticateStatus != AuthenticateStatus.Success)
             {
-                var request = (SessionRequest)data;
+                var request = (SessionRequest)packet;
                 var response = new AuthenticateResponse(request.ClientId, request.RequestId, DateTime.Now.Ticks, _authenticateStatus);
                 Socket.Send(response.Serialize());
                 return;
             }
 
-            switch (data.DataType)
+            switch (packet.DataType)
             {
                 case DataType.FileReadRequest:
                     {
-                        DoFileReadRequest((FileReadRequest)data);
+                        DoFileReadRequest((FileReadRequest)packet);
                         break;
                     }
             }

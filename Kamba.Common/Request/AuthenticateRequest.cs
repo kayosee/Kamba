@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kamba.Common
+namespace Kamba.Common.Request
 {
     public class AuthenticateRequest : SessionRequest
     {
@@ -13,7 +13,7 @@ namespace Kamba.Common
         private string _password;
         private int _usernameLength;
         private int _passwordLength;
-        public AuthenticateRequest(int clientId, long requestId,string username, string password) : base(DataType.AuthenticateRequest, clientId, requestId)
+        public AuthenticateRequest(int clientId, long requestId, string username, string password) : base(DataType.AuthenticateRequest, clientId, requestId)
         {
             _username = username;
             _password = password;
@@ -22,7 +22,7 @@ namespace Kamba.Common
         public string Username { get => _username; set => _username = value; }
         protected override ByteArrayStream GetStream()
         {
-            var stream=base.GetStream();
+            var stream = base.GetStream();
             byte[] buffer = Encoding.UTF8.GetBytes(_username);
             _usernameLength = buffer.Length;
             stream.Write(_usernameLength);

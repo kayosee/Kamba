@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kamba.Common
+namespace Kamba.Common.Response
 {
     public class AuthenticateResponse : SessionResponse
     {
@@ -13,7 +13,7 @@ namespace Kamba.Common
 
         public AuthenticateResponse(int clientId, long requestId, long responseId, AuthenticateStatus status) : base(DataType.AuthenticateResponse, clientId, requestId, responseId)
         {
-            _status = (byte)(status);
+            _status = (byte)status;
         }
         public AuthenticateResponse(ByteArrayStream stream) : base(stream)
         {

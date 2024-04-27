@@ -22,14 +22,6 @@ namespace Kamba.Common
         public int Id { get => _id; set => _id = value; }
         public AuthenticateStatus Authenticated { get => _authenticateStatus; }
         public Socket Socket { get => _socket; }
-        public void ReadAndProcess()
-        {
-            var data = ReadPacket();
-            if (data != null)
-            {
-                Process(data);
-            }
-        }
         public SessionData? ReadPacket()
         {
             long totalLength = 0;
@@ -52,7 +44,6 @@ namespace Kamba.Common
 
             return SessionData.FromPackets(packets.ToArray());
         }
-        public abstract void Process(SessionData data);
         protected void WritePacket(SessionData data)
         {
             var packets = data.ToPackets();

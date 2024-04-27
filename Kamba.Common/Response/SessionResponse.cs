@@ -1,11 +1,11 @@
-﻿using Kamba.Common;
+﻿using Kamba.Common.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kamba.Common
+namespace Kamba.Common.Response
 {
     public abstract class SessionResponse : SessionRequest
     {
@@ -17,7 +17,9 @@ namespace Kamba.Common
             _responseTime = DateTime.Now.Ticks;
         }
         public long ResponseId { get => _responseId; set => _responseId = value; }
-        public SessionResponse(ByteArrayStream stream):base(stream) 
+        public IList<DokanNet.FileInformation> Files { get; set; }
+
+        public SessionResponse(ByteArrayStream stream) : base(stream)
         {
             _responseId = stream.ReadInt64();
             _responseTime = stream.ReadInt64();

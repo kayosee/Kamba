@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamba.Web", "Kamba.Web\Kamb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamba.Model", "Kamba.Model\Kamba.Model.csproj", "{17DD4407-9FC3-459B-AA8B-AF21CAAF25F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamba.UI", "Kamba.UI\Kamba.UI.csproj", "{D809D0C0-FB4F-4C57-963B-683B50C2D269}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{17DD4407-9FC3-459B-AA8B-AF21CAAF25F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17DD4407-9FC3-459B-AA8B-AF21CAAF25F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17DD4407-9FC3-459B-AA8B-AF21CAAF25F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D809D0C0-FB4F-4C57-963B-683B50C2D269}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D809D0C0-FB4F-4C57-963B-683B50C2D269}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D809D0C0-FB4F-4C57-963B-683B50C2D269}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D809D0C0-FB4F-4C57-963B-683B50C2D269}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

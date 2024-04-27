@@ -1,4 +1,6 @@
 ﻿using Kamba.Common;
+using Kamba.Common.Request;
+using Kamba.Common.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,36 +13,15 @@ namespace Kamba.Client
 {
     public class Client : Session
     {
-        private Thread _thread;
         public Client(Socket socket) : base(socket)
         {
             _authenticateStatus = AuthenticateStatus.Unauthenticate;
             var request = new AuthenticateRequest(0, 0, "kao", "123");
-            WritePacket(request);
-
-            _thread = new Thread(() =>
+            MakeRequest(request, (r) =>
             {
-                while (Socket.Poll(-1, SelectMode.SelectRead))
-                {
-                    ReadAndProcess();
-                }
+                if (r is AuthenticateResponse)
+                    DoAuthenticateResponse((AuthenticateResponse)r);
             });
-            _thread.Start();
-        }
-        public override void Process(SessionData data)
-        {
-            switch (data.DataType)
-            {
-                case DataType.AuthenticateResponse:
-                    {
-                        DoAuthenticateResponse((AuthenticateResponse)data);
-                        break;
-                    }
-                case DataType.FileReadResponse:
-                    {
-                        break;
-                    }
-            }
         }
 
         private void DoAuthenticateResponse(AuthenticateResponse data)
@@ -48,6 +29,12 @@ namespace Kamba.Client
             _id = data.ClientId;
             _authenticateStatus = data.Status;
             Console.WriteLine(Enum.GetName(typeof(AuthenticateStatus), data.Status));
+        }
+
+        public SessionResponse? MakeRequest(SessionRequest request)
+        {
+            WritePacket(request);
+            return (SessionResponse?)ReadPacket();
         }
     }
 }

@@ -23,5 +23,7 @@ namespace Kamba.Model
         public string Password { get; set; }
         [Required]        
         public DateTime CreateTime { get; set; }
+        [Required]
+        public bool IsLocked { get; set; }
     }
 }
