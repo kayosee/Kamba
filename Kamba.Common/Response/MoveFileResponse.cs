@@ -1,24 +1,26 @@
 ﻿using DokanNet;
 
-namespace Kamba.Common.Request
+namespace Kamba.Common.Response
 {
-    public class MoveFileRequest : FileRequest
+    public class MoveFileResponse : FileResponse
     {
         private int oldNameLength;
         private int newNameLength;
         private string oldName;
         private string newName;
         private byte replace;
+        private IDokanFileInfo info;
 
         public bool Replace { get => replace == 1; set => replace = (byte)(value ? 1 : 0); }
 
-        public MoveFileRequest(int clientId, long requestId, string oldName, string newName, bool replace, IDokanFileInfo info) : base(DataType.MoveFileRequest, clientId, requestId,"",info)
+        public MoveFileResponse(int clientId, long requestId, string oldName, string newName, bool replace, IDokanFileInfo info) : base(DataType.MoveFileResponse, clientId, requestId,"",info)
         {
             this.oldName = oldName;
             this.newName = newName;
             this.replace = (byte)(replace ? 0 : 1);
+            this.info = info;
         }
-        public MoveFileRequest(ByteArrayStream stream) : base(stream)
+        public MoveFileResponse(ByteArrayStream stream) : base(stream)
         {
             oldNameLength = stream.ReadInt32();
             var buffer = new byte[oldNameLength];

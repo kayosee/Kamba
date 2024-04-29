@@ -1,17 +1,19 @@
 ﻿using DokanNet;
 
-namespace Kamba.Common.Request
+namespace Kamba.Common.Response
 {
-    public class MountedRequest : FileRequest
+    public class MountedResponse : FileResponse
     {
         private int mountPointLength;
         private string mountPoint;
+        private IDokanFileInfo info;
 
-        public MountedRequest(int clientId, long requestId, string mountPoint, IDokanFileInfo info) : base(DataType.MountedRequest, clientId, requestId,"",info)
+        public MountedResponse(int clientId, long requestId, string mountPoint, IDokanFileInfo info) : base(DataType.MountedResponse, clientId, requestId, "", info)
         {
             this.mountPoint = mountPoint;
+            this.info = info;
         }
-        public MountedRequest(ByteArrayStream stream) : base(stream)
+        public MountedResponse(ByteArrayStream stream) : base(stream)
         {
             mountPointLength = stream.ReadInt32();
             var buffer = new byte[mountPointLength];

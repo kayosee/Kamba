@@ -10,8 +10,9 @@ namespace Kamba.Client
         {
             var host = ConfigurationManager.AppSettings["host"];
             var port = ConfigurationManager.AppSettings["port"];
-            var tcpClient = new TcpClient();
-
+            var username = ConfigurationManager.AppSettings["username"];
+            var password = ConfigurationManager.AppSettings["password"];
+            FileProxy fileProxy = new FileProxy(host, int.Parse(port), username, password);
             Console.ReadKey();
         }
     }

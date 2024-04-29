@@ -2,13 +2,10 @@
 
 namespace Kamba.Common.Request
 {
-    public class UnmountedRequest : SessionRequest
+    public class UnmountedRequest : FileRequest
     {
-        private IDokanFileInfo info;
-
-        public UnmountedRequest(int clientId, long requestId, IDokanFileInfo info):base(DataType.UnmountedRequest,clientId,requestId)
+        public UnmountedRequest(int clientId, long requestId, IDokanFileInfo info):base(DataType.UnmountedRequest,clientId,requestId,"",info)
         {
-            this.info = info;
         }
         public UnmountedRequest(ByteArrayStream stream) : base(stream)
         {

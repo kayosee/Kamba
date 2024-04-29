@@ -2,7 +2,7 @@
 
 namespace Kamba.Common.Request
 {
-    internal class GetFileInformationRequest : FileRequest
+    public class GetFileInformationRequest : FileRequest
     {
         public GetFileInformationRequest(int clientId, long requestId, string fileName, IDokanFileInfo info) : base(DataType.GetFileInformationRequest, clientId, requestId, fileName, info)
         {

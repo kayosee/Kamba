@@ -18,7 +18,7 @@ namespace Kamba.Server
         }
         public void Process()
         {
-            var packet = ReadPacket();
+            var packet = ReadPacket<SessionData>();
             if (packet == null)
             {
                 return;

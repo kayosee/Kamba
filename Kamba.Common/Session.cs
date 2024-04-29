@@ -19,10 +19,10 @@ namespace Kamba.Common
             _authenticateStatus = AuthenticateStatus.Unauthenticate;
             _socket = socket;
         }
-        public int Id { get => _id; set => _id = value; }
+        public int Id { get => _id; }
         public AuthenticateStatus Authenticated { get => _authenticateStatus; }
         public Socket Socket { get => _socket; }
-        public SessionData? ReadPacket()
+        public T? ReadPacket<T>(int maxWaitSeconds = -1) where T : SessionData
         {
             long totalLength = 0;
             var packets = new List<Packet>();
@@ -30,7 +30,7 @@ namespace Kamba.Common
             {
                 try
                 {
-                    var packet = Packet.FromSocket(_socket);
+                    var packet = Packet.FromSocket(_socket, maxWaitSeconds);
                     totalLength += packet.SliceLength;
                     packets.Add(packet);
                     if (totalLength >= packet.TotalLength)
@@ -38,11 +38,12 @@ namespace Kamba.Common
                 }
                 catch (Exception ex)
                 {
-                    continue;
+                    Console.WriteLine(ex.ToString());
+                    return default(T);
                 }
             } while (true);
 
-            return SessionData.FromPackets(packets.ToArray());
+            return (T?)SessionData.FromPackets(packets.ToArray());
         }
         protected void WritePacket(SessionData data)
         {

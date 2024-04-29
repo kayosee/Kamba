@@ -2,13 +2,10 @@
 
 namespace Kamba.Common.Request
 {
-    public class GetDiskFreeSpaceRequest : SessionRequest
+    public class GetDiskFreeSpaceRequest : FileRequest
     {
-        private IDokanFileInfo info;
-
-        public GetDiskFreeSpaceRequest(int clientId, long requestId, IDokanFileInfo info) : base(DataType.GetDiskFreeSpaceRequest, clientId, requestId)
+        public GetDiskFreeSpaceRequest(int clientId, long requestId, IDokanFileInfo info) : base(DataType.GetDiskFreeSpaceRequest, clientId, requestId, "", info)
         {
-            this.info = info;
         }
         public GetDiskFreeSpaceRequest(ByteArrayStream stream) : base(stream)
         {

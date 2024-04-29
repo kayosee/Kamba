@@ -13,28 +13,36 @@ namespace Kamba.Client
 {
     public class Client : Session
     {
-        public Client(Socket socket) : base(socket)
+        private string _username;
+        private string _password;
+        public Client(Socket socket, string username, string password) : base(socket)
         {
             _authenticateStatus = AuthenticateStatus.Unauthenticate;
-            var request = new AuthenticateRequest(0, 0, "kao", "123");
-            MakeRequest(request, (r) =>
-            {
-                if (r is AuthenticateResponse)
-                    DoAuthenticateResponse((AuthenticateResponse)r);
-            });
+            _username = username;
+            _password = password;
+            DoAuthenticate();
         }
 
-        private void DoAuthenticateResponse(AuthenticateResponse data)
+        private void DoAuthenticate()
         {
-            _id = data.ClientId;
-            _authenticateStatus = data.Status;
-            Console.WriteLine(Enum.GetName(typeof(AuthenticateStatus), data.Status));
+            var request = new AuthenticateRequest(0, 0, _username, _password);
+            var response = MakeRequest<AuthenticateResponse>(request) as AuthenticateResponse;
+            if (response != null)
+            {
+                _id = response.ClientId;
+                _authenticateStatus = response.Status;
+                Console.WriteLine(Enum.GetName(typeof(AuthenticateStatus), response.Status));
+            }
+            else
+            {
+                Console.WriteLine("connect error");
+            }
         }
 
-        public SessionResponse? MakeRequest(SessionRequest request)
+        public T? MakeRequest<T>(SessionRequest request, int maxWaitSeconds = -1) where T : SessionData
         {
             WritePacket(request);
-            return (SessionResponse?)ReadPacket();
+            return ReadPacket<T>(maxWaitSeconds);
         }
     }
 }

@@ -14,8 +14,9 @@ namespace Kamba.Common.Request
         private IDokanFileInfo info;
 
         public string FileName { get => fileName; set => fileName = value; }
+        public IDokanFileInfo Info { get => info; set => info = value; }
 
-        public FileRequest(DataType dataType,int clientId, long requestId,  string fileName, IDokanFileInfo info) : base(dataType, clientId, requestId)
+        public FileRequest(DataType dataType, int clientId, long requestId, string fileName, IDokanFileInfo info) : base(dataType, clientId, requestId)
         {
             this.fileName = fileName;
             this.info = info;
@@ -26,6 +27,7 @@ namespace Kamba.Common.Request
             var buffer = new byte[fileNameLength];
             stream.Read(buffer, 0, fileNameLength);
             fileName = System.Text.Encoding.UTF8.GetString(buffer);
+            info = stream.ReadDokanFileInfo();
         }
         protected override ByteArrayStream GetStream()
         {
@@ -34,6 +36,7 @@ namespace Kamba.Common.Request
             fileNameLength = buffer.Length;
             stream.Write(fileNameLength);
             stream.Write(buffer, 0, buffer.Length);
+            stream.WriteDokanFileInfo(info);
             return stream;
         }
 

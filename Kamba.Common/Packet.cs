@@ -58,8 +58,13 @@ namespace Kamba.Common
                 return result;
             }
         }
-        public static Packet FromSocket(Socket socket)
+        public static Packet FromSocket(Socket socket, int maxWaitSeconds = -1)
         {
+            if (maxWaitSeconds > 0)
+                socket.ReceiveTimeout = (int)TimeSpan.FromSeconds(maxWaitSeconds).TotalMilliseconds;
+            else
+                socket.ReceiveTimeout = -1;
+
             Packet packet = new Packet();
 
             var buffer = new byte[_flag.Length];

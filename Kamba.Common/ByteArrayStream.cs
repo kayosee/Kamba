@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DokanNet;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -213,7 +214,7 @@ public class ByteArrayStream : IDisposable
     public void Dispose()
     {
     }
-    internal byte ReadByte()
+    public byte ReadByte()
     {
         if (_readPos >= _data.LongLength)
             throw new EndOfStreamException();
@@ -221,6 +222,53 @@ public class ByteArrayStream : IDisposable
         var result = _data[_readPos];
         _readPos += 1;
         return result;
-
+    }
+    public FileInformation ReadFileInformation()
+    {
+        var result = new FileInformation();
+        int fileNameLength = ReadInt32();
+        var buffer = new byte[fileNameLength];
+        Read(buffer, 0, fileNameLength);
+        result.FileName = System.Text.Encoding.UTF8.GetString(buffer, 0, fileNameLength);
+        result.Attributes = (FileAttributes)ReadInt32();
+        result.CreationTime = DateTime.FromBinary(ReadInt64());
+        result.LastAccessTime = DateTime.FromBinary(ReadInt64());
+        result.LastWriteTime = DateTime.FromBinary(ReadInt64());
+        result.Length = ReadInt64();
+        return result;
+    }
+    public void WriteFileInformation(FileInformation fileInformation)
+    {
+        var buffer = System.Text.Encoding.UTF8.GetBytes(fileInformation.FileName);
+        int fileNameLength = buffer.Length;
+        Write(fileNameLength);
+        Write(buffer, 0, fileNameLength);
+        Write((int)fileInformation.Attributes);
+        Write(fileInformation.CreationTime.GetValueOrDefault().Ticks);
+        Write(fileInformation.LastAccessTime.GetValueOrDefault().Ticks);
+        Write(fileInformation.LastWriteTime.GetValueOrDefault().Ticks);
+        Write(fileInformation.Length);
+    }
+    public DokanNet.IDokanFileInfo ReadDokanFileInfo()
+    {
+        MockDokanFileInfo fileInfo = new MockDokanFileInfo();
+        fileInfo.DeleteOnClose = ReadByte() == 1;
+        fileInfo.IsDirectory = ReadByte() == 1;
+        fileInfo.NoCache = ReadByte() == 1;
+        fileInfo.PagingIo = ReadByte() == 1;
+        fileInfo.ProcessId = ReadInt32();
+        fileInfo.SynchronousIo = ReadByte() == 1;
+        fileInfo.WriteToEndOfFile = ReadByte() == 1;
+        return fileInfo;
+    }
+    public void WriteDokanFileInfo(IDokanFileInfo fileInfo)
+    {
+        Write((byte)(fileInfo.DeleteOnClose ? 1 : 0));
+        Write((byte)(fileInfo.IsDirectory ? 1 : 0));
+        Write((byte)(fileInfo.NoCache ? 1 : 0));
+        Write((byte)(fileInfo.PagingIo ? 1 : 0));
+        Write(fileInfo.ProcessId);
+        Write((byte)(fileInfo.SynchronousIo ? 1 : 0));
+        Write((byte)(fileInfo.WriteToEndOfFile ? 1 : 0));
     }
 }
