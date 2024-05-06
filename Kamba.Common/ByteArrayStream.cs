@@ -1,8 +1,10 @@
 ﻿using DokanNet;
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -249,9 +251,9 @@ public class ByteArrayStream : IDisposable
         Write(fileInformation.LastWriteTime.GetValueOrDefault().Ticks);
         Write(fileInformation.Length);
     }
-    public DokanNet.IDokanFileInfo ReadDokanFileInfo()
+    public IDokanFileInfo ReadDokanFileInfo()
     {
-        MockDokanFileInfo fileInfo = new MockDokanFileInfo();
+        var fileInfo = new MockDokanFileInfo();
         fileInfo.DeleteOnClose = ReadByte() == 1;
         fileInfo.IsDirectory = ReadByte() == 1;
         fileInfo.NoCache = ReadByte() == 1;
@@ -259,6 +261,10 @@ public class ByteArrayStream : IDisposable
         fileInfo.ProcessId = ReadInt32();
         fileInfo.SynchronousIo = ReadByte() == 1;
         fileInfo.WriteToEndOfFile = ReadByte() == 1;
+        if (ReadByte() == 1)
+        {
+            fileInfo.Context = new SafeFileHandle((nint)ReadInt64(), true);
+        }
         return fileInfo;
     }
     public void WriteDokanFileInfo(IDokanFileInfo fileInfo)
@@ -270,5 +276,8 @@ public class ByteArrayStream : IDisposable
         Write(fileInfo.ProcessId);
         Write((byte)(fileInfo.SynchronousIo ? 1 : 0));
         Write((byte)(fileInfo.WriteToEndOfFile ? 1 : 0));
+        Write((byte)(fileInfo.Context == null ? 1 : 0));
+        if (fileInfo.Context is SafeHandle)
+            Write((Int64)((SafeHandle)fileInfo.Context).DangerousGetHandle());
     }
 }

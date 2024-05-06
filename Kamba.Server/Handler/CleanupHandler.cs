@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Win32;
 
 namespace Kamba.Server.Handler
 {
@@ -12,7 +13,13 @@ namespace Kamba.Server.Handler
     {
         public CleanupResponse Process(CleanupRequest request)
         {
-            throw new NotImplementedException();
+            if(request.Info.Context != null)
+            {
+                PInvoke.CloseHandle((Windows.Win32.Foundation.HANDLE)request.Info.Context);
+                request.Info.Context = null;
+            }
+
+            return new CleanupResponse(request);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DokanNet;
+using Kamba.Common.Request;
 
 namespace Kamba.Common.Response
 {
@@ -15,6 +16,7 @@ namespace Kamba.Common.Response
         public GetDiskFreeSpaceResponse(int clientId, long requestId, long responseId, IDokanFileInfo info) : base(DataType.GetDiskFreeSpaceResponse, clientId, requestId, "", info)
         {
         }
+        public GetDiskFreeSpaceResponse(GetDiskFreeSpaceRequest request) : base(DataType.GetDiskFreeSpaceResponse, request) { }
         public GetDiskFreeSpaceResponse(ByteArrayStream stream) : base(stream)
         {
             stream.Write(freeBytesAvailable);

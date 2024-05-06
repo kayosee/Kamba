@@ -15,7 +15,7 @@ namespace Kamba.Common.Request
         public FileMode Mode { get => (FileMode)mode; set => mode = (int)value; }
         public System.IO.FileOptions Options { get => (System.IO.FileOptions)options; set => options = (int)value; }
         public FileAttributes Attributes { get => (FileAttributes)attributes; set => attributes = (int)value; }
-        public CreateFileRequest(int clientId, long requestId, string fileName, DokanNet.FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, bool isDirectory, IDokanFileInfo info) : base(DataType.CreateFileRequest, clientId, requestId, fileName, info)
+        public CreateFileRequest(int clientId, long requestId, string fileName, DokanNet.FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info) : base(DataType.CreateFileRequest, clientId, requestId, fileName, info)
         {
             this.access = (long)access;
             this.share = (int)share;

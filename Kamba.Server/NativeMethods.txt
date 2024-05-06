@@ -1,0 +1,3 @@
+﻿CreateFileW
+CreateFile
+CloseHandle

@@ -6,6 +6,6 @@ namespace Kamba.Common.Request
     {
         public CleanupRequest(int clientId, long requestId, string fileName, IDokanFileInfo info) : base(DataType.CleanupRequest, clientId, requestId, fileName, info)
         {
-        }
+        }       
     }
 }

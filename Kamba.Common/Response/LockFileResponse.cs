@@ -1,4 +1,5 @@
 ﻿using DokanNet;
+using Kamba.Common.Request;
 
 namespace Kamba.Common.Response
 {
@@ -11,6 +12,7 @@ namespace Kamba.Common.Response
             this.offset = offset;
             this.length = length;
         }
+        public LockFileResponse(LockFileRequest request) : base(DataType.LockFileResponse, request) { }
         public LockFileResponse(ByteArrayStream stream) : base(stream)
         {
             offset = stream.ReadInt64();

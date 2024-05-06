@@ -7,6 +7,32 @@ namespace Kamba.Common.Response
         private long creationTime;
         private long lastAccessTime;
         private long lastWriteTime;
+
+        public DateTime CreationTime
+        {
+            get { return DateTime.FromBinary(creationTime); }
+            set
+            {
+                creationTime = value.Ticks;
+            }
+        }
+        public DateTime LastAccessTime
+        {
+            get { return DateTime.FromBinary(lastAccessTime); }
+            set
+            {
+                lastAccessTime = value.Ticks;
+            }
+        }
+        public DateTime LastWriteTime
+        {
+            get { return DateTime.FromBinary(lastWriteTime); }
+            set
+            {
+                lastWriteTime = value.Ticks;
+            }
+        }
+
         public SetFileTimeResponse(int clientId, long requestId, string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime, IDokanFileInfo info) : base(DataType.SetFileTimeResponse, clientId, requestId, fileName, info)
         {
             this.creationTime = creationTime.GetValueOrDefault().Ticks;

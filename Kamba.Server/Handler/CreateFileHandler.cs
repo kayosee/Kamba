@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Win32;
 using FileAccess = DokanNet.FileAccess;
 
 namespace Kamba.Server.Handler
@@ -24,11 +26,10 @@ namespace Kamba.Server.Handler
         public CreateFileResponse Process(CreateFileRequest request)
         {
             var folder = ConfigurationManager.AppSettings["folder"];
-            var response = new CreateFileResponse(request);
-            var result = DokanResult.Success;
+            var response = new CreateFileResponse(request) { ResponseCode = NtStatus.Success };
             var filePath = Path.Combine(folder, request.FileName);
 
-            if (request.IsDirectory)
+            if (request.Info.IsDirectory)
             {
                 try
                 {
@@ -141,23 +142,22 @@ namespace Kamba.Server.Handler
                     case FileMode.Truncate:
                         if (!pathExists)
                         {
-                            response.ResponseCode = NtStatus.ObjectNameNotFound; 
+                            response.ResponseCode = NtStatus.ObjectNameNotFound;
                             return response;
                         }
                         break;
                 }
-
                 try
                 {
                     System.IO.FileAccess streamAccess = readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite;
 
-                    if (request.Mode == System.IO.FileMode.CreateNew && readAccess) streamAccess = System.IO.FileAccess.ReadWrite;
-
-                    response.Info.Context = new FileStream(filePath, request.Mode,streamAccess, request.Share, 4096, request.Options);
+                    if (request.Mode == System.IO.FileMode.CreateNew && readAccess)
+                        streamAccess = System.IO.FileAccess.ReadWrite;
+                    response.Info.Context = new FileStream(filePath, request.Mode, streamAccess, request.Share, 4096, request.Options).SafeFileHandle;
 
                     if (pathExists && (request.Mode == FileMode.OpenOrCreate
                                        || request.Mode == FileMode.Create))
-                        result = DokanResult.AlreadyExists;
+                        response.ResponseCode = DokanResult.AlreadyExists;
 
                     bool fileCreated = request.Mode == FileMode.CreateNew || request.Mode == FileMode.Create || (!pathExists && request.Mode == FileMode.OpenOrCreate);
                     if (fileCreated)
@@ -171,20 +171,20 @@ namespace Kamba.Server.Handler
                 }
                 catch (UnauthorizedAccessException) // don't have access rights
                 {
-                    if (info.Context is FileStream fileStream)
+                    if (request.Info.Context is SafeHandle)
                     {
                         // returning AccessDenied cleanup and close won't be called,
                         // so we have to take care of the stream now
-                        fileStream.Dispose();
-                        info.Context = null;
+                        ((SafeHandle)request.Info.Context).Close();
+                        request.Info.Context = null;
                     }
-                    return Trace(nameof(CreateFile), fileName, info, access, share, mode, options, attributes,
-                        DokanResult.AccessDenied);
+                    response.ResponseCode = NtStatus.AccessDenied;
+                    return response;
                 }
                 catch (DirectoryNotFoundException)
                 {
-                    return Trace(nameof(CreateFile), fileName, info, access, share, mode, options, attributes,
-                        DokanResult.PathNotFound);
+                    response.ResponseCode = NtStatus.ObjectPathNotFound;
+                    return response;
                 }
                 catch (Exception ex)
                 {
@@ -192,15 +192,14 @@ namespace Kamba.Server.Handler
                     switch (hr)
                     {
                         case 0x80070020: //Sharing violation
-                            return Trace(nameof(CreateFile), fileName, info, access, share, mode, options, attributes,
-                                DokanResult.SharingViolation);
+                            response.ResponseCode = NtStatus.SharingViolation;
+                            return response;
                         default:
                             throw;
                     }
                 }
             }
-            return Trace(nameof(CreateFile), fileName, info, access, share, mode, options, attributes,
-                result);
+            return response;
         }
     }
 }

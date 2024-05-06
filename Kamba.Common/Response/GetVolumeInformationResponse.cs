@@ -1,4 +1,5 @@
 ﻿using DokanNet;
+using Kamba.Common.Request;
 
 namespace Kamba.Common.Response
 {
@@ -17,6 +18,11 @@ namespace Kamba.Common.Response
         public uint MaximumComponentLength { get => maximumComponentLength; set => maximumComponentLength = value; }
 
         public GetVolumeInformationResponse(int clientId, long requestId, IDokanFileInfo info) : base(DataType.GetVolumeInformationResponse, clientId, requestId, "", info)
+        {
+            volumeLabel = string.Empty;
+            fileSystemName = string.Empty;
+        }
+        public GetVolumeInformationResponse(GetVolumeInformationRequest request) : base(DataType.GetVolumeInformationResponse, request) 
         {
             volumeLabel = string.Empty;
             fileSystemName = string.Empty;

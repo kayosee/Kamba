@@ -35,7 +35,7 @@ namespace Kamba.Common.Response
             attributes = stream.ReadInt32();
         }
 
-        public CreateFileResponse(CreateFileRequest request) : base(DataType.CreateFileResponse, request.ClientId, request.RequestId, request.FileName, request.Info)
+        public CreateFileResponse(CreateFileRequest request) : base(DataType.CreateFileResponse, request)
         {
             this.access = (long)request.Access;
             this.share = (int)request.Share;

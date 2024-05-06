@@ -1,4 +1,5 @@
 ﻿using DokanNet;
+using Kamba.Common.Request;
 
 namespace Kamba.Common.Response
 {
@@ -9,16 +10,19 @@ namespace Kamba.Common.Response
         private string oldName;
         private string newName;
         private byte replace;
-        private IDokanFileInfo info;
 
         public bool Replace { get => replace == 1; set => replace = (byte)(value ? 1 : 0); }
 
-        public MoveFileResponse(int clientId, long requestId, string oldName, string newName, bool replace, IDokanFileInfo info) : base(DataType.MoveFileResponse, clientId, requestId,"",info)
+        public MoveFileResponse(int clientId, long requestId, string oldName, string newName, bool replace, IDokanFileInfo info) : base(DataType.MoveFileResponse, clientId, requestId, "", info)
         {
             this.oldName = oldName;
             this.newName = newName;
             this.replace = (byte)(replace ? 0 : 1);
-            this.info = info;
+        }
+        public MoveFileResponse(MoveFileRequest request) : base(DataType.MoveFileResponse, request)
+        {
+            oldName = string.Empty;
+            newName = string.Empty;
         }
         public MoveFileResponse(ByteArrayStream stream) : base(stream)
         {

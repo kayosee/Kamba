@@ -1,4 +1,5 @@
 ﻿using DokanNet;
+using Kamba.Common.Request;
 
 namespace Kamba.Common.Response
 {
@@ -10,10 +11,16 @@ namespace Kamba.Common.Response
         private FileInformation[] files;
 
         public FileInformation[] Files { get => files; set => files = value; }
+        public string SearchPattern { get => searchPattern; set => searchPattern = value; }
 
         public FindFilesWithPatternResponse(int clientId, long requestId, string fileName, string searchPattern, IDokanFileInfo info) : base(DataType.FindFilesWithPatternResponse, clientId, requestId, fileName, info)
         {
             this.searchPattern = searchPattern;
+            this.files = new FileInformation[0];
+        }
+        public FindFilesWithPatternResponse(FindFilesWithPatternRequest request) : base(DataType.FindFilesWithPatternResponse, request)
+        {
+            this.searchPattern = string.Empty;
             this.files = new FileInformation[0];
         }
         public FindFilesWithPatternResponse(ByteArrayStream stream) : base(stream)

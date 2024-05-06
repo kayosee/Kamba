@@ -23,6 +23,12 @@ namespace Kamba.Common.Response
             responseMessageLength = 0;
             responseMessage = string.Empty;
         }
+        public FileResponse(DataType dataType,FileRequest request) : base(dataType, request.ClientId, request.RequestId, request.FileName, request.Info) 
+        {
+            responseCode = 0;
+            responseMessageLength = 0;
+            responseMessage = string.Empty;
+        }
         public FileResponse(ByteArrayStream stream) : base(stream)
         {
             responseCode = stream.ReadInt64();

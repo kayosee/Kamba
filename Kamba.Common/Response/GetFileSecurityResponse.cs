@@ -1,4 +1,5 @@
-﻿using System.Security.AccessControl;
+﻿using Kamba.Common.Request;
+using System.Security.AccessControl;
 
 namespace Kamba.Common.Response
 {
@@ -9,6 +10,7 @@ namespace Kamba.Common.Response
         {
             this.sections = (int)sections;
         }
+        public GetFileSecurityResponse(GetFileSecurityRequest request) : base(DataType.GetFileSecurityResponse, request) { }
         public GetFileSecurityResponse(ByteArrayStream stream) : base(stream)
         {
             sections = stream.ReadInt32();

@@ -13,5 +13,7 @@ namespace Kamba.Common.Response
         public CleanupResponse(int clientId, long requestId, string fileName, IDokanFileInfo info) : base(DataType.CleanupResponse, clientId, requestId, fileName, info)
         {
         }
+        public CleanupResponse(CleanupRequest request):base(DataType.CleanupResponse, request) { }
+        public CleanupResponse(ByteArrayStream stream):base(stream) { }
     }
 }

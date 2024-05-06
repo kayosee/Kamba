@@ -1,4 +1,5 @@
 ﻿using DokanNet;
+using Kamba.Common.Request;
 
 namespace Kamba.Common.Response
 {
@@ -6,12 +7,14 @@ namespace Kamba.Common.Response
     {
         private int mountPointLength;
         private string mountPoint;
-        private IDokanFileInfo info;
 
         public MountedResponse(int clientId, long requestId, string mountPoint, IDokanFileInfo info) : base(DataType.MountedResponse, clientId, requestId, "", info)
         {
             this.mountPoint = mountPoint;
-            this.info = info;
+        }
+        public MountedResponse(MountedRequest request) : base(DataType.MountedResponse, request) 
+        {
+            this.mountPoint = string.Empty;
         }
         public MountedResponse(ByteArrayStream stream) : base(stream)
         {

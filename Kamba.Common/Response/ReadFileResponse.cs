@@ -1,4 +1,5 @@
 ﻿using DokanNet;
+using Kamba.Common.Request;
 
 namespace Kamba.Common.Response
 {
@@ -9,12 +10,17 @@ namespace Kamba.Common.Response
         private byte[] buffer;
 
         public byte[] Buffer { get => buffer; set => buffer = value; }
+        public long Offset { get { return offset; } set { offset = value; } }
 
         public ReadFileResponse(int clientId, long requestId, string fileName, long offset, IDokanFileInfo info) : base(DataType.ReadFileResponse, clientId, requestId, fileName, info)
         {
             this.offset = offset;
             this.length = 0;
             this.buffer = new byte[0];
+        }
+        public ReadFileResponse(ReadFileRequest request) : base(DataType.ReadFileResponse, request)
+        {
+            buffer = new byte[0];
         }
         public ReadFileResponse(ByteArrayStream stream) : base(stream)
         {
